@@ -1,0 +1,173 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas - Go</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        
+        input[type="text"], 
+        textarea, 
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .task {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .task.completed {
+            background-color: #f8f8f8;
+            opacity: 0.7;
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .category {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .category-Python {
+            background-color: #3776ab;
+            color: white;
+        }
+        
+        .category-AWS {
+            background-color: #ff9900;
+            color: black;
+        }
+        
+        .category-MongoDB {
+            background-color: #4DB33D;
+            color: white;
+        }
+        
+        .priority-alta {
+            color: #dc3545;
+        }
+        
+        .priority-média {
+            color: #ffc107;
+        }
+        
+        .priority-baixa {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciador de Estudo para 2025</h1>
+        
+        <form action="/add" method="POST">
+            <div class="form-group">
+                <label for="title">Assunto para ser estudado:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Descrição</label>
+                <textarea id="description" name="description" rows="3" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Categoria:</label>
+                <select id="category" name="category">
+                    <option value="Go">Python</option>
+                    <option value="AWS">AWS</option>
+                    <option value="MongoDB">MongoDB</option>
+                    <option value="PostgreSQL"></option>
+                    <option value="Kotlin"></option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="priority">Prioridade:</label>
+                <select id="priority" name="priority">
+                    <option value="baixa">Baixa</option>
+                    <option value="média">Média</option>
+                    <option value="alta">Alta</option>
+                </select>
+            </div>
+            
+            <button type="submit">Adicionar Tarefa</button>
+        </form>
+        
+        <h2>Tarefas:</h2>
+        {{range $index, $task := .tasks}}
+        <div class="task {{if $task.Completed}}completed{{end}}">
+            <div class="task-header">
+                <h3>
+                    <span class="category category-{{$task.Category}}">{{$task.Category}}</span>
+                    {{$task.Title}}
+                </h3>
+                <div>
+                    {{if not $task.Completed}}
+                    <a href="/complete/{{$index}}">✓ Concluir</a>
+                    {{end}}
+                    <a href="/delete/{{$index}}">🗑 Excluir</a>
+                </div>
+            </div>
+            <p style="white-space: pre-line;">{{$task.Description}}</p>
+            <p>
+                <small>
+                    Prioridade: <span class="priority-{{$task.Priority}}">{{$task.Priority}}</span> |
+                    Criado em: {{$task.CreatedAt.Format "02/01/2006 15:04:05"}}
+                    {{if $task.Completed}} | ✓ Concluída{{end}}
+                </small>
+            </p>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>
